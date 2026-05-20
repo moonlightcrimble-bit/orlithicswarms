@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORLITHIC — Programmable Trust Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--red:#cc0000;--red-bright:#ff1a1a;--red-subtle:rgba(204,0,0,0.08);--black:#000;--dark2:#0a0a0a;--dark3:#111;--text:#e0e0e0;--text-dim:#888;--border:rgba(204,0,0,0.25)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(204,0,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(204,0,0,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;height:72px;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
+.nav-logo-text{font-family:'Orbitron',monospace;font-weight:700;font-size:18px;letter-spacing:4px;color:#fff}
+.nav-links{display:flex;align-items:center;gap:6px;list-style:none}
+.nav-links a{display:flex;align-items:center;gap:7px;padding:7px 14px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;border:1px solid transparent;border-radius:2px;transition:all .2s}
+.nav-links a:hover{color:var(--red-bright);border-color:var(--border);background:var(--red-subtle)}
+.nav-links a svg{width:14px;height:14px;flex-shrink:0}
+.nav-btn{padding:8px 20px !important;background:var(--red) !important;color:#fff !important;border-color:var(--red) !important;font-weight:600 !important}
+.nav-btn:hover{background:var(--red-bright) !important;border-color:var(--red-bright) !important;color:#fff !important}
+
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 2rem 80px;overflow:hidden}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(204,0,0,0.18) 0%,transparent 70%);pointer-events:none}
+.hero-logo{width:140px;height:140px;margin-bottom:2.5rem;animation:floatLogo 6s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(204,0,0,0.6))}
+@keyframes floatLogo{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--red);margin-bottom:1.2rem}
+.hero-title{font-family:'Orbitron',monospace;font-size:clamp(42px,7vw,84px);font-weight:900;letter-spacing:8px;line-height:1.0;color:#fff;text-shadow:0 0 60px rgba(204,0,0,0.4);margin-bottom:1.5rem}
+.hero-title span{color:var(--red)}
+.hero-sub{font-size:20px;font-weight:300;color:var(--text-dim);max-width:560px;line-height:1.7;margin-bottom:3rem}
+.hero-sub strong{color:var(--text);font-weight:500}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all .2s;cursor:pointer;border:1px solid transparent}
+.btn svg{width:16px;height:16px;flex-shrink:0}
+.btn-primary{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-primary:hover{background:var(--red-bright);border-color:var(--red-bright);box-shadow:0 0 30px rgba(204,0,0,0.5)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--red);color:var(--red-bright);background:var(--red-subtle)}
+
+/* TICKER */
+.ticker-wrap{position:relative;z-index:1;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:rgba(204,0,0,0.04);padding:10px 0}
+.ticker{display:flex;gap:80px;animation:ticker 20s linear infinite;white-space:nowrap}
+.ticker-item{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;color:var(--red);text-transform:uppercase;flex-shrink:0}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:100px 4rem}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--red);margin-bottom:1rem}
+.section-title{font-family:'Orbitron',monospace;font-size:clamp(24px,3.2vw,40px);font-weight:700;letter-spacing:3px;color:#fff;margin-bottom:1.5rem;line-height:1.2}
+.section-desc{font-size:17px;color:var(--text-dim);max-width:560px;line-height:1.7}
+
+/* ABOUT */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto}
+.about-visual{position:relative;display:flex;align-items:center;justify-content:center;height:380px}
+.about-ring{position:absolute;border:1px solid rgba(204,0,0,0.2);border-radius:50%;animation:ringPulse 4s ease-in-out infinite}
+.about-ring:nth-child(1){width:320px;height:320px;animation-delay:0s}
+.about-ring:nth-child(2){width:420px;height:420px;animation-delay:1s;border-style:dashed}
+.about-ring:nth-child(3){width:520px;height:520px;animation-delay:2s}
+@keyframes ringPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}}
+
+/* FEATURES */
+#features{background:var(--dark2)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;max-width:1200px;margin:3rem auto 0;background:var(--border);border:1px solid var(--border)}
+.feature-card{background:var(--black);padding:2.5rem;transition:background .2s;cursor:default}
+.feature-card:hover{background:var(--red-subtle)}
+.feature-icon{width:48px;height:48px;margin-bottom:1.5rem;color:var(--red)}
+.feature-icon svg{width:100%;height:100%}
+.feature-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:600;letter-spacing:2px;color:#fff;margin-bottom:.75rem;text-transform:uppercase}
+.feature-desc{font-size:15px;color:var(--text-dim);line-height:1.7}
+
+/* USE CASES */
+#usecases{background:var(--dark3)}
+.uc-tabs{display:flex;gap:0;max-width:1200px;margin:3rem auto 0;border:1px solid var(--border)}
+.uc-tab-list{display:flex;flex-direction:column;min-width:260px;border-right:1px solid var(--border);background:var(--dark2)}
+.uc-tab{padding:1.4rem 1.8rem;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;border-bottom:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:12px;border-left:3px solid transparent}
+.uc-tab svg{width:18px;height:18px;flex-shrink:0}
+.uc-tab:last-child{border-bottom:none}
+.uc-tab:hover{color:var(--text);background:var(--red-subtle)}
+.uc-tab.active{color:var(--red-bright);background:rgba(204,0,0,0.1);border-left-color:var(--red)}
+.uc-panels{flex:1;padding:3rem}
+.uc-panel{display:none}
+.uc-panel.active{display:block}
+.uc-panel-tag{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--red);margin-bottom:1rem}
+.uc-panel-title{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:1rem;line-height:1.3}
+.uc-panel-desc{font-size:16px;color:var(--text-dim);line-height:1.8;margin-bottom:2rem}
+.uc-bullets{list-style:none;display:flex;flex-direction:column;gap:10px}
+.uc-bullets li{display:flex;align-items:flex-start;gap:12px;font-size:15px;color:var(--text-dim)}
+.uc-bullets li::before{content:'▸';color:var(--red);flex-shrink:0;margin-top:1px}
+
+/* HOW IT WORKS */
+.steps{max-width:900px;margin:3rem auto 0;display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:80px 1fr;gap:2rem;padding:2.5rem 0;border-bottom:1px solid var(--border);align-items:start}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--red);opacity:.5;line-height:1}
+.step-title{font-family:'Orbitron',monospace;font-size:15px;letter-spacing:2px;color:#fff;margin-bottom:.5rem;text-transform:uppercase}
+.step-desc{font-size:16px;color:var(--text-dim);line-height:1.7}
+
+/* STATS */
+#stats{background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.stat{background:var(--black);padding:3rem 2rem;text-align:center}
+.stat-num{font-family:'Orbitron',monospace;font-size:36px;font-weight:900;color:var(--red);display:block;margin-bottom:.5rem;letter-spacing:2px}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)}
+
+/* BUY */
+#buy{text-align:center;padding:120px 2rem}
+.buy-inner{max-width:700px;margin:0 auto}
+.buy-btns{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:1.5rem}
+.contract-address{display:inline-flex;align-items:center;gap:12px;padding:12px 24px;background:var(--dark3);border:1px solid var(--border);border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px;color:var(--text-dim);cursor:pointer;transition:all .2s;margin-top:1rem}
+.contract-address:hover{border-color:var(--red);color:var(--text)}
+
+/* FOOTER */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:3rem 4rem;display:flex;align-items:center;justify-content:space-between;background:var(--dark2)}
+.footer-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.footer-logo span{font-family:'Orbitron',monospace;font-size:14px;letter-spacing:4px;color:var(--text-dim)}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--red)}
+.footer-copy{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:rgba(255,255,255,0.2)}
+
+/* SCAN LINE */
+.scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(204,0,0,0.6),transparent);animation:scanDown 8s linear infinite;pointer-events:none;z-index:200;opacity:.35}
+@keyframes scanDown{0%{top:-2px}100%{top:100vh}}
+
+@media(max-width:900px){
+  nav{padding:0 1.5rem}
+  nav .nav-links li:not(:last-child){display:none}
+  section{padding:70px 1.5rem}
+  .about{grid-template-columns:1fr;gap:40px}
+  .about-visual{height:220px}
+  .about-ring:nth-child(2),.about-ring:nth-child(3){display:none}
+  .about-ring:nth-child(1){width:200px;height:200px}
+  .features-grid{grid-template-columns:1fr}
+  .uc-tabs{flex-direction:column}
+  .uc-tab-list{min-width:unset;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border)}
+  .uc-tab{border-bottom:none;border-right:1px solid var(--border);white-space:nowrap;border-left:none;border-bottom:3px solid transparent}
+  .uc-tab.active{border-left:none;border-bottom-color:var(--red)}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+<div class="scan-line"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <!-- Orlithic logo SVG inline (no text) -->
+    <svg width="42" height="42" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="95" fill="#0a0000" stroke="#cc0000" stroke-width="2.5"/>
+      <!-- surrounding hexagons -->
+      <polygon points="100,22 121,34 121,58 100,70 79,58 79,34" fill="#aa0000" opacity="0.95"/>
+      <polygon points="143,46 164,58 164,82 143,94 122,82 122,58" fill="#880000" opacity="0.9"/>
+      <polygon points="57,46 78,58 78,82 57,94 36,82 36,58" fill="#880000" opacity="0.9"/>
+      <polygon points="143,106 164,118 164,142 143,154 122,142 122,118" fill="#770000" opacity="0.85"/>
+      <polygon points="57,106 78,118 78,142 57,154 36,142 36,118" fill="#770000" opacity="0.85"/>
+      <polygon points="100,130 121,142 121,166 100,178 79,166 79,142" fill="#660000" opacity="0.8"/>
+      <!-- center hex -->
+      <polygon points="100,68 118,78 118,98 100,108 82,98 82,78" fill="#cc0000"/>
+      <!-- center O mark -->
+      <polygon points="100,78 110,84 110,94 100,100 90,94 90,84" fill="#000" opacity="0.7"/>
+      <!-- circuit lines -->
+      <line x1="36" y1="70" x2="18" y2="70" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="14" cy="70" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <line x1="164" y1="70" x2="182" y2="70" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="186" cy="70" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <line x1="36" y1="130" x2="16" y2="117" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="13" cy="115" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <line x1="164" y1="130" x2="184" y2="117" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="187" cy="115" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <line x1="100" y1="178" x2="100" y2="193" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="100" cy="196" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    </svg>
+    <span class="nav-logo-text">ORLITHIC</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>About</a></li>
+    <li><a href="#features"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Features</a></li>
+    <li><a href="#usecases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Use Cases</a></li>
+    <li><a href="https://dexscreener.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Chart</a></li>
+    <li><a href="https://x.com/orlithic" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.736-8.85L1.254 2.25H8.08l4.259 5.629L18.245 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a></li>
+    <li><a class="nav-btn btn" href="https://pump.fun" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Buy Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-glow"></div>
+  <!-- Hero logo — same design, no text -->
+  <svg class="hero-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" fill="#080000" stroke="#cc0000" stroke-width="2"/>
+    <polygon points="100,22 121,34 121,58 100,70 79,58 79,34" fill="#aa0000" opacity="0.95"/>
+    <polygon points="143,46 164,58 164,82 143,94 122,82 122,58" fill="#880000" opacity="0.9"/>
+    <polygon points="57,46 78,58 78,82 57,94 36,82 36,58" fill="#880000" opacity="0.9"/>
+    <polygon points="143,106 164,118 164,142 143,154 122,142 122,118" fill="#770000" opacity="0.85"/>
+    <polygon points="57,106 78,118 78,142 57,154 36,142 36,118" fill="#770000" opacity="0.85"/>
+    <polygon points="100,130 121,142 121,166 100,178 79,166 79,142" fill="#660000" opacity="0.8"/>
+    <polygon points="100,68 118,78 118,98 100,108 82,98 82,78" fill="#cc0000"/>
+    <polygon points="100,78 110,84 110,94 100,100 90,94 90,84" fill="#000" opacity="0.65"/>
+    <line x1="36" y1="70" x2="18" y2="70" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="14" cy="70" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <line x1="164" y1="70" x2="182" y2="70" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="186" cy="70" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <line x1="36" y1="130" x2="16" y2="117" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="13" cy="115" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <line x1="164" y1="130" x2="184" y2="117" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="187" cy="115" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <line x1="100" y1="178" x2="100" y2="193" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="100" cy="196" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+  </svg>
+  <p class="hero-eyebrow">// Autonomous AI Infrastructure //</p>
+  <h1 class="hero-title">ORL<span>I</span>THIC</h1>
+  <p class="hero-sub"><strong>Programmable trust infrastructure</strong> for autonomous AI agents — enabling secure coordination and machine-to-machine commerce.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="https://pump.fun" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Buy on Pump.fun
+    </a>
+    <a class="btn btn-outline" href="https://dexscreener.com" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>View Chart
+    </a>
+    <a class="btn btn-outline" href="https://x.com/orlithic" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.736-8.85L1.254 2.25H8.08l4.259 5.629L18.245 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Follow on X
+    </a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">// ORLITHIC</span><span class="ticker-item">// Trust Infrastructure</span><span class="ticker-item">// Autonomous AI Agents</span><span class="ticker-item">// Machine-to-Machine Commerce</span><span class="ticker-item">// Programmable Trust</span><span class="ticker-item">// Secure Coordination</span><span class="ticker-item">// $ORLI</span><span class="ticker-item">// ORLITHIC</span><span class="ticker-item">// Trust Infrastructure</span><span class="ticker-item">// Autonomous AI Agents</span><span class="ticker-item">// Machine-to-Machine Commerce</span><span class="ticker-item">// Programmable Trust</span><span class="ticker-item">// Secure Coordination</span><span class="ticker-item">// $ORLI</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about">
+    <div class="about-visual">
+      <div class="about-ring"></div><div class="about-ring"></div><div class="about-ring"></div>
+      <svg width="260" height="260" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="95" fill="#080000" stroke="#cc0000" stroke-width="2"/>
+        <polygon points="100,22 121,34 121,58 100,70 79,58 79,34" fill="#aa0000" opacity="0.95"/>
+        <polygon points="143,46 164,58 164,82 143,94 122,82 122,58" fill="#880000" opacity="0.9"/>
+        <polygon points="57,46 78,58 78,82 57,94 36,82 36,58" fill="#880000" opacity="0.9"/>
+        <polygon points="143,106 164,118 164,142 143,154 122,142 122,118" fill="#770000" opacity="0.85"/>
+        <polygon points="57,106 78,118 78,142 57,154 36,142 36,118" fill="#770000" opacity="0.85"/>
+        <polygon points="100,130 121,142 121,166 100,178 79,166 79,142" fill="#660000" opacity="0.8"/>
+        <polygon points="100,68 118,78 118,98 100,108 82,98 82,78" fill="#cc0000"/>
+        <polygon points="100,78 110,84 110,94 100,100 90,94 90,84" fill="#000" opacity="0.65"/>
+        <line x1="36" y1="70" x2="18" y2="70" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="14" cy="70" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <line x1="164" y1="70" x2="182" y2="70" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="186" cy="70" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <line x1="36" y1="130" x2="16" y2="117" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="13" cy="115" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <line x1="164" y1="130" x2="184" y2="117" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="187" cy="115" r="3" fill="none" stroke="#cc0000" stroke-width="1.5" opacity="0.6"/>
+      </svg>
+    </div>
+    <div>
+      <p class="section-label">// What is Orlithic</p>
+      <h2 class="section-title">The Backbone of Autonomous Agent Commerce</h2>
+      <p class="section-desc">Orlithic is a programmable trust infrastructure built for the age of autonomous AI agents. As AI systems evolve into self-directing economic actors, they need a secure, verifiable layer to coordinate, transact, and cooperate.<br><br>Orlithic provides exactly that — a decentralized substrate for machine-to-machine trust that enables AI agents to buy, sell, and collaborate without human intermediaries.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div style="max-width:1200px;margin:0 auto">
+    <p class="section-label">// Core Architecture</p>
+    <h2 class="section-title">Built for the Machine Economy</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3 class="feature-title">Programmable Trust</h3>
+        <p class="feature-desc">Smart contract-enforced trust rules let AI agents verify credentials and commit to agreements without centralized intermediaries.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+        <h3 class="feature-title">Agent Coordination</h3>
+        <p class="feature-desc">Decentralized coordination layer enabling autonomous AI agents to discover, negotiate, and collaborate at machine speed and scale.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+        <h3 class="feature-title">M2M Commerce</h3>
+        <p class="feature-desc">Machine-to-machine payment rails for high-throughput microtransactions between AI agents in autonomous economic ecosystems.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3 class="feature-title">Cryptographic Identity</h3>
+        <p class="feature-desc">On-chain identity and attestation ensures every participating agent is verifiable, accountable, and operating within defined trust parameters.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3 class="feature-title">Real-time Settlement</h3>
+        <p class="feature-desc">Sub-second finality for agent transactions enables AI systems to operate at the speed of computation, not legacy financial rails.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3 class="feature-title">Multi-Agent Mesh</h3>
+        <p class="feature-desc">Composable architecture supporting millions of concurrent agent interactions in a dynamic mesh of trusted autonomous AI relationships.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+        <h3 class="feature-title">On-chain Audit Trail</h3>
+        <p class="feature-desc">Every interaction, transaction, and trust event is immutably recorded — giving full auditability and accountability across the network.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <h3 class="feature-title">Modular Protocol</h3>
+        <p class="feature-desc">Plug-and-play modules let developers extend Orlithic with custom trust rules, verification schemes, and commerce primitives for any AI use case.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
+        <h3 class="feature-title">Interoperability</h3>
+        <p class="feature-desc">Cross-chain bridges and standardized agent APIs connect AI agents across any blockchain, platform, or execution environment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="usecases">
+  <div style="max-width:1200px;margin:0 auto">
+    <p class="section-label">// Real-World Applications</p>
+    <h2 class="section-title">Who Uses Orlithic</h2>
+    <div class="uc-tabs">
+      <div class="uc-tab-list">
+        <div class="uc-tab active" data-tab="defi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>DeFi Agents
+        </div>
+        <div class="uc-tab" data-tab="enterprise">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Enterprise AI
+        </div>
+        <div class="uc-tab" data-tab="data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Data Markets
+        </div>
+        <div class="uc-tab" data-tab="gaming">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 12h.01M18 12h.01"/></svg>AI Gaming
+        </div>
+        <div class="uc-tab" data-tab="iot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>IoT Networks
+        </div>
+        <div class="uc-tab" data-tab="research">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>AI Research
+        </div>
+      </div>
+      <div class="uc-panels">
+        <div class="uc-panel active" id="panel-defi">
+          <p class="uc-panel-tag">// Use Case 01</p>
+          <h3 class="uc-panel-title">Autonomous DeFi Trading Agents</h3>
+          <p class="uc-panel-desc">AI trading agents need to coordinate strategies, share alpha, and execute cross-protocol deals — all without revealing proprietary logic or exposing themselves to counterparty risk. Orlithic provides the trust layer that makes autonomous DeFi agent coordination both secure and profitable.</p>
+          <ul class="uc-bullets">
+            <li>Agents verify each other's liquidity positions before executing joint arbitrage strategies</li>
+            <li>Cross-protocol yield optimization with cryptographically-enforced profit splits</li>
+            <li>Reputation-based counterparty selection for flash loan coordination</li>
+            <li>Automated risk-sharing contracts between competing trading bots</li>
+          </ul>
+        </div>
+        <div class="uc-panel" id="panel-enterprise">
+          <p class="uc-panel-tag">// Use Case 02</p>
+          <h3 class="uc-panel-title">Enterprise AI Workflow Orchestration</h3>
+          <p class="uc-panel-desc">Large enterprises deploying multi-agent AI systems need a trust framework that ensures agents from different vendors, departments, or clouds can collaborate securely on sensitive tasks without leaking proprietary data or creating liability exposure.</p>
+          <ul class="uc-bullets">
+            <li>Cross-vendor AI agent SLAs enforced automatically on-chain</li>
+            <li>Confidential data sharing with zero-knowledge proofs between enterprise AI systems</li>
+            <li>Verifiable compute proofs for AI task outsourcing between organizations</li>
+            <li>Automated billing and settlement for internal AI service consumption</li>
+          </ul>
+        </div>
+        <div class="uc-panel" id="panel-data">
+          <p class="uc-panel-tag">// Use Case 03</p>
+          <h3 class="uc-panel-title">Decentralized Data Marketplaces</h3>
+          <p class="uc-panel-desc">AI agents need high-quality, real-time data to function. Orlithic enables a permissionless marketplace where data-producing agents monetize their outputs and data-consuming agents purchase access — with verifiable quality guarantees and instant settlement.</p>
+          <ul class="uc-bullets">
+            <li>Data quality attestations verified on-chain before purchase</li>
+            <li>Streaming micropayments for real-time data subscriptions between agents</li>
+            <li>Reputation scoring for data providers based on historical accuracy</li>
+            <li>Automatic refund contracts if data quality falls below agreed thresholds</li>
+          </ul>
+        </div>
+        <div class="uc-panel" id="panel-gaming">
+          <p class="uc-panel-tag">// Use Case 04</p>
+          <h3 class="uc-panel-title">AI-Native Gaming Economies</h3>
+          <p class="uc-panel-desc">Next-generation games feature millions of AI-controlled characters, guilds, and economies that must trade, negotiate, and compete in real time. Orlithic gives game developers the infrastructure to power fully autonomous in-game economies with verifiable fairness.</p>
+          <ul class="uc-bullets">
+            <li>AI guild agents negotiate alliances and trade agreements on-chain</li>
+            <li>Verifiable randomness and fairness proofs for AI-driven game events</li>
+            <li>Cross-game asset transfers mediated by trusted AI broker agents</li>
+            <li>Player-AI commerce with guaranteed execution and instant settlement</li>
+          </ul>
+        </div>
+        <div class="uc-panel" id="panel-iot">
+          <p class="uc-panel-tag">// Use Case 05</p>
+          <h3 class="uc-panel-title">Autonomous IoT &amp; Smart City Networks</h3>
+          <p class="uc-panel-desc">Billions of IoT devices will act as autonomous economic agents — buying energy, selling sensor data, negotiating bandwidth. Orlithic provides the trust and payment rails that let these devices transact with each other at machine speed and massive scale.</p>
+          <ul class="uc-bullets">
+            <li>Smart grid agents buying and selling surplus energy peer-to-peer</li>
+            <li>Autonomous vehicle agents negotiating toll payments and route sharing</li>
+            <li>Industrial sensor networks selling data to AI models in real time</li>
+            <li>Smart building systems coordinating resource optimization across multiple agents</li>
+          </ul>
+        </div>
+        <div class="uc-panel" id="panel-research">
+          <p class="uc-panel-tag">// Use Case 06</p>
+          <h3 class="uc-panel-title">Collaborative AI Research Networks</h3>
+          <p class="uc-panel-desc">Research institutions and AI labs can deploy specialized agents that collaborate on complex problems — sharing model weights, compute, and discoveries — while maintaining intellectual property protection and ensuring proper attribution and compensation.</p>
+          <ul class="uc-bullets">
+            <li>Federated learning coordination with provable contribution tracking</li>
+            <li>Compute sharing markets between research institutions with fair billing</li>
+            <li>Model licensing and royalty distribution enforced automatically on-chain</li>
+            <li>Reproducibility guarantees for AI experiments through verifiable compute</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div style="max-width:1200px;margin:0 auto">
+    <p class="section-label">// Protocol Design</p>
+    <h2 class="section-title">How Orlithic Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div><h3 class="step-title">Agent Registration</h3><p class="step-desc">Autonomous AI agents register on the Orlithic network by staking $ORLI tokens and publishing a cryptographic identity manifest. This creates a verifiable on-chain record of agent capabilities, reputation history, and trust parameters.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div><h3 class="step-title">Trust Negotiation</h3><p class="step-desc">When agents need to interact, Orlithic's trust engine facilitates a rapid cryptographic handshake that verifies both parties' credentials, reputation scores, and agreed-upon terms of engagement — all in milliseconds.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div><h3 class="step-title">Secure Coordination</h3><p class="step-desc">Once trust is established, agents coordinate tasks, share resources, and execute smart contracts autonomously. All interactions are logged on-chain for full auditability, reputation updates, and dispute resolution.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div><h3 class="step-title">Value Settlement</h3><p class="step-desc">Payments and value transfers between agents settle instantly using $ORLI tokens. Reputation scores update automatically based on fulfilled commitments, creating a self-reinforcing trust economy.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="stats-inner">
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Agent Capacity</span></div>
+      <div class="stat"><span class="stat-num">&lt;1s</span><span class="stat-label">Settlement Time</span></div>
+      <div class="stat"><span class="stat-num">0</span><span class="stat-label">Intermediaries</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">On-chain Verifiable</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUY -->
+<section id="buy" style="text-align:center;padding:120px 2rem">
+  <div class="buy-inner">
+    <p class="section-label">// Get Involved</p>
+    <h2 class="section-title">Join the Network</h2>
+    <p class="section-desc" style="max-width:none;margin:0 auto 2.5rem">Be part of the infrastructure powering the autonomous agent economy. Trade $ORLI on Pump.fun, track the chart on DexScreener, or follow the conversation on X.</p>
+    <div class="buy-btns">
+      <a class="btn btn-primary" href="https://pump.fun" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Buy on Pump.fun
+      </a>
+      <a class="btn btn-outline" href="https://dexscreener.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Chart on DexScreener
+      </a>
+      <a class="btn btn-outline" href="https://x.com/orlithic" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.736-8.85L1.254 2.25H8.08l4.259 5.629L18.245 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Follow on X
+      </a>
+    </div>
+    <div class="contract-address" id="caBox" onclick="copyCa()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      CA: Coming Soon — click to copy
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a class="footer-logo" href="#">
+    <svg width="30" height="30" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="95" fill="#080000" stroke="#cc0000" stroke-width="3"/>
+      <polygon points="100,22 121,34 121,58 100,70 79,58 79,34" fill="#aa0000" opacity="0.95"/>
+      <polygon points="143,46 164,58 164,82 143,94 122,82 122,58" fill="#880000" opacity="0.9"/>
+      <polygon points="57,46 78,58 78,82 57,94 36,82 36,58" fill="#880000" opacity="0.9"/>
+      <polygon points="143,106 164,118 164,142 143,154 122,142 122,118" fill="#770000" opacity="0.85"/>
+      <polygon points="57,106 78,118 78,142 57,154 36,142 36,118" fill="#770000" opacity="0.85"/>
+      <polygon points="100,130 121,142 121,166 100,178 79,166 79,142" fill="#660000" opacity="0.8"/>
+      <polygon points="100,68 118,78 118,98 100,108 82,98 82,78" fill="#cc0000"/>
+      <polygon points="100,78 110,84 110,94 100,100 90,94 90,84" fill="#000" opacity="0.65"/>
+    </svg>
+    <span>ORLITHIC</span>
+  </a>
+  <ul class="footer-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#usecases">Use Cases</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="https://x.com/orlithic" target="_blank" rel="noopener">Twitter / X</a></li>
+    <li><a href="https://pump.fun" target="_blank" rel="noopener">Buy</a></li>
+    <li><a href="https://dexscreener.com" target="_blank" rel="noopener">Chart</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 ORLITHIC. All rights reserved.</p>
+</footer>
+
+<script>
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
+  });
+});
+
+// Scroll fade-in
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}
+  });
+},{threshold:.08});
+document.querySelectorAll('.feature-card,.step,.stat,.uc-tab').forEach(el=>{
+  el.style.opacity='0';el.style.transform='translateY(20px)';
+  el.style.transition='opacity .5s ease,transform .5s ease';
+  io.observe(el);
+});
+
+// Use case tabs
+document.querySelectorAll('.uc-tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.uc-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.uc-panel').forEach(p=>p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('panel-'+this.dataset.tab).classList.add('active');
+  });
+});
+
+// Copy CA
+function copyCa(){
+  const box=document.getElementById('caBox');
+  const orig=box.innerHTML;
+  navigator.clipboard.writeText('Coming Soon').then(()=>{
+    box.innerHTML='<span style="color:var(--red)">✓ Copied to clipboard!</span>';
+    setTimeout(()=>{box.innerHTML=orig},2000);
+  }).catch(()=>{
+    box.innerHTML='<span style="color:var(--red)">CA: Coming Soon</span>';
+    setTimeout(()=>{box.innerHTML=orig},2000);
+  });
+}
+</script>
+</body>
+</html>
